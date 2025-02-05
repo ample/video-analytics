@@ -37,7 +37,10 @@ exports.handler = async (event) => {
         const originalUrl = new URL(url);
         const segmentUrl = line.startsWith("http")
           ? line
-          : `${originalUrl.origin}/${line}`;
+          : `${originalUrl.href.substring(
+              0,
+              originalUrl.href.lastIndexOf("/")
+            )}/${line}`;
         modifiedPlaylist.push(`${segmentUrl}${separator}${queryParams}`);
       }
     });
