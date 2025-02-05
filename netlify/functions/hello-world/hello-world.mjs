@@ -34,7 +34,11 @@ exports.handler = async (event) => {
       } else {
         // Modify segment URLs by appending query parameters
         const separator = line.includes("?") ? "&" : "?";
-        modifiedPlaylist.push(`${line}${separator}${queryParams}`);
+        const originalUrl = new URL(url);
+        const segmentUrl = line.startsWith("http")
+          ? line
+          : `${originalUrl.origin}/${line}`;
+        modifiedPlaylist.push(`${segmentUrl}${separator}${queryParams}`);
       }
     });
 
