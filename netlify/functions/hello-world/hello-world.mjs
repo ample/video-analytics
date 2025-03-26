@@ -50,12 +50,11 @@ exports.handler = async (event) => {
       statusCode: 200,
       headers: {
         "Content-Type": "application/vnd.apple.mpegurl",
-        "Content-Type": "text/plain",
         "Access-Control-Allow-Origin": "*", // Allow access from all origins
         "Access-Control-Allow-Methods": "GET, OPTIONS",
         "Access-Control-Allow-Headers": "Content-Type",
       },
-      body: await response.text(),
+      body: modifiedPlaylist.join("\n"),
     };
   } catch (error) {
     return {
