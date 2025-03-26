@@ -24,6 +24,7 @@ exports.handler = async (event) => {
     }
 
     let playlist = await response.text();
+    playlist = playlist.replace(/^i/, "");
     let modifiedPlaylist = [];
 
     // Modify each segment in the playlist
@@ -49,11 +50,12 @@ exports.handler = async (event) => {
       statusCode: 200,
       headers: {
         "Content-Type": "application/vnd.apple.mpegurl",
+        "Content-Type": "text/plain",
         "Access-Control-Allow-Origin": "*", // Allow access from all origins
         "Access-Control-Allow-Methods": "GET, OPTIONS",
         "Access-Control-Allow-Headers": "Content-Type",
       },
-      body: modifiedPlaylist.join("\n"),
+      body: await response.text(),
     };
   } catch (error) {
     return {
