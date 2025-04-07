@@ -29,11 +29,32 @@ exports.handler = async (event) => {
 
     // Modify each segment in the playlist
     playlist.split("\n").forEach((line) => {
-      if (line.startsWith("#") || line.trim() === "") {
-        // Leave metadata lines unchanged
+      if (line.startsWith("#EXT-X-MEDIA")) {
+        // Handle #EXT-X-MEDIA tags with URI attribute
+        const uriMatch = line.match(/URI="([^"]+)"/);
+        if (uriMatch) {
+          const originalUri = uriMatch[1];
+          const originalUrl = new URL(url);
+          const fullUri = originalUri.startsWith("http")
+            ? originalUri
+            : `${originalUrl.href.substring(
+                0,
+                originalUrl.href.lastIndexOf("/")
+              )}/${originalUri}`;
+          const separator = fullUri.includes("?") ? "&" : "?";
+          const modifiedLine = line.replace(
+            /URI="([^"]+)"/,
+            `URI="${fullUri}${separator}${queryParams}"`
+          );
+          modifiedPlaylist.push(modifiedLine);
+        } else {
+          modifiedPlaylist.push(line);
+        }
+      } else if (line.startsWith("#") || line.trim() === "") {
+        // Leave other metadata lines unchanged
         modifiedPlaylist.push(line);
       } else {
-        // Modify segment URLs by appending query parameters
+        // Handle segment URLs (existing logic)
         const separator = line.includes("?") ? "&" : "?";
         const originalUrl = new URL(url);
         const segmentUrl = line.startsWith("http")
